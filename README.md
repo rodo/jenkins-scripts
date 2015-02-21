@@ -19,3 +19,6 @@ Usage
 =====
 
 `$ perl jobs.pl config.xml`
+
+Remember to reload configuration from disk each time you edit config
+files, option *Reload Configuration from Disk* in *Manage jenkins* section.
