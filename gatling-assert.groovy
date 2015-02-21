@@ -20,3 +20,10 @@ def report = manager.getLogMatcher(&quot;&gt;.*(max reponse time .*  generated i
 if(report?.matches()) {
     manager.createSummary(&quot;info.gif&quot;).appendText(report.group(1), false, false, false, &quot;black&quot;) 
 }
+
+def version = manager.getLogMatcher(".*version=(.*) Redirect.*\$")
+if(version?.matches()) {
+  manager.createSummary("orange-square.png").appendText(version.group(1), false, false, false, "black")
+  manager.addShortText(version.group(1))
+}
+        
