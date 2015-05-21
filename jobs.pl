@@ -36,7 +36,6 @@ foreach my $node ($params->[0]->childNodes()) {
     $params->[0]->removeChild($node) if ($node->nodeName =~ "script");    
 }
 
-
 open my $fs, '<', $file_script or die "error opening $filename: $!";
 my $script = do { local $/; <$fs> };    
 
@@ -44,7 +43,31 @@ my $script_el = $d->ownerDocument->createElement('script');
 my $sb = $d->createTextNode($script);
 $params->[0]->appendChild( $script_el );
 $script_el->appendChild( $sb );
+#
+#
+#
+my $command_script = 'command.xml';
 
+if (-e $command_script) {
+
+    $params  = $d->findnodes('/project/builders/hudson.tasks.Shell');
+    
+    foreach my $node ($params->[0]->childNodes()) {
+        $params->[0]->removeChild($node) if ($node->nodeName =~ "command");    
+    }
+
+    open my $fs, '<', $command_script or die "error opening $filename: $!";
+    my $script = do { local $/; <$fs> };    
+
+    my $script_el = $d->ownerDocument->createElement('command');
+    my $sb = $d->createTextNode($script);
+    $params->[0]->appendChild( $script_el );
+    $script_el->appendChild( $sb );
+}
+
+#
+# Write new file to disk
+#
 open (FO, ">$filename");
 print FO $d;
 close(FO);
