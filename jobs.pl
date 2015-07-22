@@ -18,24 +18,26 @@ use strict;
 use warnings;
 use XML::LibXML;
 
-my $filename = shift() or die();
+# Read filename as commande line argument
+my $filename = shift() or die "Please indicate a filename !\n",
 
-die("Please") unless $filename;
-
+# groovy script to be used
 my $file_script = 'gatling-assert.groovy';
 
 open my $fh, '<', $filename or die "error opening $filename: $!";
 my $data = do { local $/; <$fh> };
 
+# Parse the file read
 my $p = XML::LibXML->new;
 my $d = $p->parse_string($data);
 
+# remove the Groovy Post Build node
 my $params  = $d->findnodes('/project/publishers/org.jvnet.hudson.plugins.groovypostbuild.GroovyPostbuildRecorder/script');
-
 foreach my $node ($params->[0]->childNodes()) {
     $params->[0]->removeChild($node) if ($node->nodeName =~ "script");    
 }
 
+# Read the content of the new Groovy Build node
 open my $fs, '<', $file_script or die "error opening $filename: $!";
 my $script = do { local $/; <$fs> };    
 
