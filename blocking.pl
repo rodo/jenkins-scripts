@@ -48,14 +48,20 @@ my $d = $p->parse_string($data);
 my $params  = $d->findnodes('/project/properties/hudson.plugins.buildblocker.BuildBlockerProperty');
 foreach my $node ($params->[0]->childNodes()) {
     $params->[0]->removeChild($node) if ($node->nodeName =~ "blockingJobs");
+    $params->[0]->removeChild($node) if ($node->nodeName =~ "useBuildBlocker");
 }
-
+#
+my $script_el = $d->ownerDocument->createElement('useBuildBlocker');
+my $sb = $d->createTextNode("true");
+$params->[0]->appendChild( $script_el );
+$script_el->appendChild( $sb );
+#
 # Read the content of the new Groovy Build node
 open my $fs, '<', 'blockingJobs.txt' or die "error opening $file_script: $!";
 my $script = do { local $/; <$fs> };
 
-my $script_el = $d->ownerDocument->createElement('blockingJobs');
-my $sb = $d->createTextNode($script);
+$script_el = $d->ownerDocument->createElement('blockingJobs');
+$sb = $d->createTextNode($script);
 $params->[0]->appendChild( $script_el );
 $script_el->appendChild( $sb );
 #
